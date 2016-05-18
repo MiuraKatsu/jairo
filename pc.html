@@ -1,0 +1,35 @@
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<title>PC側</title>
+<style>
+#image{
+  -webkit-transition: all .25s ease-out;
+          transition: all .25s ease-out;
+  -webkit-transform: rotate(0deg);
+          transform: rotate(0deg);
+}
+#image.is-landscape{
+  -webkit-transform: rotate(90deg);
+          transform: rotate(90deg);
+}
+</style>
+</head>
+<body>
+<img id="image" src="https://s3-ap-northeast-1.amazonaws.com/new-tutorial/smartphone.min.svg" alt="スマートフォン">
+
+<div id="nine">
+<div id="gx" style="float:left">gx</div>
+<div id="gy" style="float:left">gy</div>
+<div id="gz" style="float:left">gz</div>
+<div id="rx" style="float:left">rx</div>
+<div id="ry" style="float:left">rz</div>
+<div id="rz" style="float:left">ry</div>
+<div id="mx" style="float:left">mx</div>
+<div id="my" style="float:left">my</div>
+<div id="mz" style="float:left">mz</div>
+</div>
+
+<script src='https://cdn.mlkcca.com/v2.0.0/milkcocoa.js'></script>
+<script src="main-pc.js"></script>
+</body>
