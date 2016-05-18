@@ -4,31 +4,28 @@ window.onload = function(){
 
   // app_idは自分のものに書き換えてください
   var milkcocoa = new MilkCocoa("blueilasdost.mlkcca.com");
-  var dsg = milkcocoa.dataStore('gravity');
   var dsn = milkcocoa.dataStore('nine');
 
-  dsg.on('send', changeViewFromSentMode);
-  dsn.on('send', changeViewFromSentNine);
+  var nine_data = {"gx": 0, "gy": 0, "gz": 0, "rx": 0, "ry": 0, "rz": 0, "mx": 0, "my": 0, "mz": 0}
 
-  function changeViewFromSentMode(sent){
-    if(sent.value.mode === 'portrait'){
-      image.className = '';
+  dsn.on('send', getNineData);
+
+  function getNineData(sent){
+	for(var k of Object.keys(sent.value)){
+		nine_data[k] = floatConvertSyncer(sent.value[k],1);
     }
-    if(sent.value.mode === 'landscape'){
-      image.className = 'is-landscape';
-    }
+	//console.log(sent.value);
   }
 
-  function changeViewFromSentNine(sent){
-	
-	//if( typeof sent.value.mx !== "undefined"){
-	//	console.log(sent.value);
-	//}
+  //1s毎に描画
+  setInterval(changeViewFromNineData, 1000);
 
-	for(var k of Object.keys(sent.value)){
+  function changeViewFromNineData(){
+	
+	for(var k of Object.keys(nine_data)){
 		var appendElement = document.getElementById(k);
 		var newDiv = document.createElement("div");
-		newDiv.innerHTML = floatConvertSyncer(sent.value[k],1);
+		newDiv.innerHTML = floatConvertSyncer(nine_data[k],1);
 		appendElement.appendChild(newDiv);
 		childNodes = appendElement.childNodes;
 
@@ -38,9 +35,9 @@ window.onload = function(){
 		}
 	}
 
-	//console.log(sent.value);
   }
 
+  //桁揃え
   function floatConvertSyncer( num , dig ){
 	  var p = Math.pow( 10 , dig ) ;
 	  return Math.round( num * p ) / p ;

@@ -4,43 +4,57 @@ window.onload = function(){
 
   // app_idは自分のものに書き換えてください
   var milkcocoa = new MilkCocoa("blueilasdost.mlkcca.com");
-  var dsg = milkcocoa.dataStore('gravity');
   var dsn = milkcocoa.dataStore('nine');
 
-  var nine_data = {"gx": 0, "gy": 0, "gz":0}
+  var nine_data = {"gx": 0, "gy": 0, "gz": 0, "rx": 0, "ry": 0, "rz": 0, "mx": 0, "my": 0, "mz": 0}
 
   window.addEventListener('devicemotion', function(e){
 
 	//重力加速度センサー
     gravity = e.accelerationIncludingGravity;
 
-    g_output.innerHTML
-    = 'g-x: '+floatConvertSyncer(gravity.x,1) +'<br/>'
-    + 'g-y: '+floatConvertSyncer(gravity.y,1) +'<br/>'
-    + 'g-z: '+floatConvertSyncer(gravity.z,1);
+    nine_data["gx"] = gravity.x;
+    nine_data["gy"] = gravity.y;
+    nine_data["gz"] = gravity.z;
 
-    sendGravityFromNineAxisMotionSensors(gravity);
-    sendModeFromGravityValue(gravity);
+    g_output.innerHTML
+    = 'g-x: '+floatConvertSyncer(nine_data["gx"],1) +'<br/>'
+    + 'g-y: '+floatConvertSyncer(nine_data["gy"],1) +'<br/>'
+    + 'g-z: '+floatConvertSyncer(nine_data["gz"],1);
+
+    //sendGravityFromNineAxisMotionSensors(gravity);
 
 	//回転速度センサー
 	rotation = e.rotationRate;
-    r_output.innerHTML
-    = 'r-x: '+floatConvertSyncer(rotation.beta ,1) +'<br/>'
-    + 'r-y: '+floatConvertSyncer(rotation.gamma,1) +'<br/>'
-    + 'r-z: '+floatConvertSyncer(rotation.alpha,1);
 
-    sendRotationFromNineAxisMotionSensors(rotation);
+    nine_data["rx"] = rotation.beta;
+    nine_data["ry"] = rotation.gamma;
+    nine_data["rz"] = rotation.alpha;
+
+    r_output.innerHTML
+    = 'r-x: '+floatConvertSyncer(nine_data["rx"] ,1) +'<br/>'
+    + 'r-y: '+floatConvertSyncer(nine_data["ry"] ,1) +'<br/>'
+    + 'r-z: '+floatConvertSyncer(nine_data["rz"] ,1);
+
+    //sendRotationFromNineAxisMotionSensors(rotation);
+    dsn.send(nine_data)
   },true);
 
 
   window.addEventListener('deviceorientation',function(e){
+
+    nine_data["mx"] = e.beta;
+    nine_data["my"] = e.gamma;
+    nine_data["mz"] = e.alpha;
+
 	//地磁気センサー
     m_output.innerHTML
-    = 'm-x: '+floatConvertSyncer(e.beta ,1) +'<br/>'
-    + 'm-y: '+floatConvertSyncer(e.gamma,1) +'<br/>'
-    + 'm-z: '+floatConvertSyncer(e.alpha,1);
+    = 'm-x: '+floatConvertSyncer(nine_data["mx"] ,1) +'<br/>'
+    + 'm-y: '+floatConvertSyncer(nine_data["my"] ,1) +'<br/>'
+    + 'm-z: '+floatConvertSyncer(nine_data["mz"] ,1);
 
-    sendMagnaticFromNineAxisMotionSensors(e);
+    //sendMagnaticFromNineAxisMotionSensors(e);
+    dsn.send(nine_data)
   },true);
 
   function sendGravityFromNineAxisMotionSensors(g){
@@ -56,25 +70,7 @@ window.onload = function(){
   };
 
 
-  function sendModeFromGravityValue(g){
-
-    // 絶対値を取得
-    var x = Math.sqrt(g.x * g.x);
-    var y = Math.sqrt(g.y * g.y);
-
-    // portrait -> landscape
-    if(currentMode === 'portrait' && x > 8.5 && y < 1.5){
-      currentMode = 'landscape';
-      dsg.send({mode: currentMode});
-    }
-
-    // landscape -> portrait
-    if(currentMode === 'landscape' && x < 1.5 && y > 8.5){
-      currentMode = 'portrait';
-      dsg.send({mode: currentMode});
-    }
-  };
-
+  //桁揃え
   function floatConvertSyncer( num , dig ){
 	  var p = Math.pow( 10 , dig ) ;
 	  return Math.round( num * p ) / p ;
