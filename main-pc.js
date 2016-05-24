@@ -1,4 +1,63 @@
+
+
+
 window.onload = function(){
+
+
+  var stage;
+
+  //document.ready = function() {
+    stage = d3.select("#d3graph").append("svg:svg").attr("width", $("#d3graph").width()).attr("height", 400);
+    setInterval(updateGraph,100);
+  //};
+  //
+  var colors = d3.scale.category10();
+  var d3Line = d3.svg.line()
+  .x(function(d,i){return i * 10})
+  .y(function(d,i){return d });
+  
+  var points_gx = new Array();
+  var points_gy = new Array();
+  var points_gz = new Array();
+
+  function updateGraph() {
+    //points.push(Math.random() * 100 + 100);
+    points_gx.push(nine_data["gx"] * 10 + 200);
+    points_gy.push(nine_data["gy"] * 10 + 200);
+    points_gz.push(nine_data["gz"] * 10 + 200);
+
+    if(points_gx.length > $("#d3graph").width()/10) {
+        points_gx.shift();
+        points_gy.shift();
+        points_gz.shift();
+    }
+
+    // 削除する
+    stage.selectAll("path").remove();
+
+    // 描画する
+    stage.append("path")
+    .attr("d", d3Line(points_gx))
+    .attr("stroke", colors(0))
+    .attr("fill", "none");
+
+    stage.append("path")
+    .attr("d", d3Line(points_gy))
+    .attr("stroke", colors(1))
+    .attr("fill", "none");
+
+    stage.append("path")
+    .attr("d", d3Line(points_gz))
+    .attr("stroke", colors(2))
+    .attr("fill", "none");
+
+  }
+
+
+
+
+
+
 
   var image = document.getElementById('image');
 
@@ -34,6 +93,7 @@ window.onload = function(){
 			appendElement.removeChild(childNodes[1]);
 		}
 	}
+
 
   }
 
