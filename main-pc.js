@@ -56,24 +56,45 @@ window.onload = function(){
 
 
 
+    var connectOptions = {
+      useSSL: true,
+      timeout: 3,
+      mqttVersion: 4,
+      onSuccess: subscribe
+    };
+    client.connect(connectOptions);
+    client.onMessageArrived = onMessage;
+    client.onConnectionLost = function(e) { console.log(e) };
 
 
+    function subscribe() {
+      client.subscribe("nine");
+      console.log("subscribed");
+    }
+    function onMessage(message) {
+      getNineData(JSON.parse(message.payloadString));
+      //r_output.innerHTML
+      //= message.payloadString;
+      //data.messages.push(message.payloadString);
+      console.log("message received: " + message.payloadString);
+    }
 
-  var image = document.getElementById('image');
+
+  //var image = document.getElementById('image');
 
   // app_idは自分のものに書き換えてください
-  var milkcocoa = new MilkCocoa("blueilasdost.mlkcca.com");
-  var dsn = milkcocoa.dataStore('nine');
+  //var milkcocoa = new MilkCocoa("blueilasdost.mlkcca.com");
+  //var dsn = milkcocoa.dataStore('nine');
 
   var nine_data = {"gx": 0, "gy": 0, "gz": 0, "rx": 0, "ry": 0, "rz": 0, "mx": 0, "my": 0, "mz": 0}
 
-  dsn.on('send', getNineData);
+  //dsn.on('send', getNineData);
 
   function getNineData(sent){
-	for(var k of Object.keys(sent.value)){
-		nine_data[k] = floatConvertSyncer(sent.value[k],1);
+	for(var k of Object.keys(sent)){
+		nine_data[k] = floatConvertSyncer(sent[k],1);
     }
-	//console.log(sent.value);
+	//console.log(sent);
   }
 
   //1s毎に描画

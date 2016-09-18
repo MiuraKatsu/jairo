@@ -1,10 +1,8 @@
 window.onload = function(){
 
-  var currentMode = 'portrait';
-
   // app_idは自分のものに書き換えてください
-  var milkcocoa = new MilkCocoa("blueilasdost.mlkcca.com");
-  var dsn = milkcocoa.dataStore('nine');
+  //var milkcocoa = new MilkCocoa("blueilasdost.mlkcca.com");
+  //var dsn = milkcocoa.dataStore('nine');
 
   var nine_data = {"gx": 0, "gy": 0, "gz": 0, "rx": 0, "ry": 0, "rz": 0, "mx": 0, "my": 0, "mz": 0}
 
@@ -37,7 +35,8 @@ window.onload = function(){
     + 'r-z: '+floatConvertSyncer(nine_data["rz"] ,1);
 
     //sendRotationFromNineAxisMotionSensors(rotation);
-    dsn.send(nine_data)
+    //dsn.send(nine_data)
+    send(nine_data)
   },true);
 
 
@@ -54,7 +53,8 @@ window.onload = function(){
     + 'm-z: '+floatConvertSyncer(nine_data["mz"] ,1);
 
     //sendMagnaticFromNineAxisMotionSensors(e);
-    dsn.send(nine_data)
+    //dsn.send(nine_data)
+    send(nine_data)
   },true);
 
   function sendGravityFromNineAxisMotionSensors(g){
@@ -76,5 +76,34 @@ window.onload = function(){
 	  return Math.round( num * p ) / p ;
   };
 
+
+
+    var connectOptions = {
+      useSSL: true,
+      timeout: 3,
+      mqttVersion: 4,
+      onSuccess: subscribe
+    };
+    client.connect(connectOptions);
+    client.onMessageArrived = onMessage;
+    client.onConnectionLost = function(e) { console.log(e) };
+ 
+  function send(content){
+      var message = new Paho.MQTT.Message(window.JSON.stringify(content));
+      message.destinationName = "nine";
+      client.send(message);
+  }
+
+    function subscribe() {
+      client.subscribe("nine");
+      console.log("subscribed");
+    }
+
+    function onMessage(message) {
+      r_output.innerHTML
+      = message.payloadString;
+      //data.messages.push(message.payloadString);
+      console.log("message received: " + message.payloadString);
+    }
 };
 
