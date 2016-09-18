@@ -85,7 +85,7 @@ window.onload = function(){
       onSuccess: subscribe
     };
     client.connect(connectOptions);
-    client.onMessageArrived = onMessage;
+    //client.onMessageArrived = onMessage;
     client.onConnectionLost = function(e) { console.log(e) };
  
   function send(content){
