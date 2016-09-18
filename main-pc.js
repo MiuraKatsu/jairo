@@ -76,7 +76,7 @@ window.onload = function(){
       //r_output.innerHTML
       //= message.payloadString;
       //data.messages.push(message.payloadString);
-      console.log("message received: " + message.payloadString);
+      //console.log("message received: " + message.payloadString);
     }
 
 
