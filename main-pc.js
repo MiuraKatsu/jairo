@@ -66,17 +66,17 @@ window.onload = function(){
     client.onMessageArrived = onMessage;
     client.onConnectionLost = function(e) { console.log(e) };
 
-
     function subscribe() {
       client.subscribe("nine");
       console.log("subscribed");
     }
+
     function onMessage(message) {
       getNineData(JSON.parse(message.payloadString));
       //r_output.innerHTML
       //= message.payloadString;
       //data.messages.push(message.payloadString);
-      //console.log("message received: " + message.payloadString);
+      console.log("message received: " + message.payloadString);
     }
 
 
