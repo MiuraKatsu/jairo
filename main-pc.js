@@ -20,6 +20,8 @@ window.onload = function(){
   var points_gy = new Array();
   var points_gz = new Array();
 
+  var nine_data = {"gx": 0, "gy": 0, "gz": 0, "rx": 0, "ry": 0, "rz": 0, "mx": 0, "my": 0, "mz": 0}
+
   function updateGraph() {
     //points.push(Math.random() * 100 + 100);
     points_gx.push(nine_data["gx"] * 10 + 200);
@@ -53,18 +55,30 @@ window.onload = function(){
 
   }
 
+    var client;
+    getEndpoint(
+        'ap-northeast-1', 
+        'abb4wssef8fld.iot.ap-northeast-1.amazonaws.com',
+        function(err, endpoint) {
+          if (err) {
+            console.log('failed', err);
+            return;
+          }
+          var clientId = Math.random().toString(36).substring(7);
+          client = new Paho.MQTT.Client(endpoint, clientId);
+          var connectOptions = {
+            useSSL: true,
+            timeout: 3,
+            mqttVersion: 4,
+            onSuccess: subscribe
+          };
+          client.connect(connectOptions);
+          client.onMessageArrived = onMessage;
+          client.onConnectionLost = function(e) { console.log(e) };
+        });
 
 
 
-    var connectOptions = {
-      useSSL: true,
-      timeout: 3,
-      mqttVersion: 4,
-      onSuccess: subscribe
-    };
-    client.connect(connectOptions);
-    client.onMessageArrived = onMessage;
-    client.onConnectionLost = function(e) { console.log(e) };
 
     function subscribe() {
       client.subscribe("nine");
@@ -86,7 +100,6 @@ window.onload = function(){
   //var milkcocoa = new MilkCocoa("blueilasdost.mlkcca.com");
   //var dsn = milkcocoa.dataStore('nine');
 
-  var nine_data = {"gx": 0, "gy": 0, "gz": 0, "rx": 0, "ry": 0, "rz": 0, "mx": 0, "my": 0, "mz": 0}
 
   //dsn.on('send', getNineData);
 
@@ -94,7 +107,7 @@ window.onload = function(){
 	for(var k of Object.keys(sent)){
 		nine_data[k] = floatConvertSyncer(sent[k],1);
     }
-	//console.log(sent);
+	console.log(sent);
   }
 
   //1s毎に描画

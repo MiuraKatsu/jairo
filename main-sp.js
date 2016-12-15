@@ -76,17 +76,29 @@ window.onload = function(){
 	  return Math.round( num * p ) / p ;
   };
 
+    var client;
+    getEndpoint(
+        'ap-northeast-1', 
+        'abb4wssef8fld.iot.ap-northeast-1.amazonaws.com',
+        function(err, endpoint) {
+          if (err) {
+            console.log('failed', err);
+            return;
+          }
+          var clientId = Math.random().toString(36).substring(7);
+          client = new Paho.MQTT.Client(endpoint, clientId);
+          var connectOptions = {
+            useSSL: true,
+            timeout: 3,
+            mqttVersion: 4,
+            onSuccess: subscribe
+          };
+          client.connect(connectOptions);
+          //client.onMessageArrived = onMessage;
+          client.onConnectionLost = function(e) { console.log(e) };
+        });
 
 
-    var connectOptions = {
-      useSSL: true,
-      timeout: 3,
-      mqttVersion: 4,
-      onSuccess: subscribe
-    };
-    client.connect(connectOptions);
-    //client.onMessageArrived = onMessage;
-    client.onConnectionLost = function(e) { console.log(e) };
  
   function send(content){
       var message = new Paho.MQTT.Message(window.JSON.stringify(content));
